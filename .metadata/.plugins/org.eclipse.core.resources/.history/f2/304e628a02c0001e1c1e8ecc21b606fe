@@ -1,0 +1,17 @@
+package vlocka;
+
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.util.*;
+
+public class vykresli extends Canvas {
+
+	private static final long serialVersionUID = 502905880140222188L;
+
+	public void paint(Graphics g) {
+		Vector<double[]> body = new Vector<double[]>();
+		double[] = [20.0, 80.0];
+		body.add([])
+		g.drawLine(20, 80, 580, 80);
+	}
+}
