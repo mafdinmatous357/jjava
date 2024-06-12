@@ -10,11 +10,12 @@ public class vykresli extends Canvas {
 
 	public void paint(Graphics g) {
 		Vector<double[]> body = new Vector<double[]>();
-		double bodA[] = {10.0, 10.0 };
-		double bodB[] = {1000.0, 1000.0 };
+		double bodB[] = {10.0, 10.0 };
+		double bodA[] = {1000.0, 1000.0 };
 		body.add(bodA);
 		body.add(bodB);
-		for (int y = 0; y < 9; y++) {
+		body.add(bodA);
+		for (int y = 0; y < 8; y++) {
 			for (int i = body.size() - 1; i > 0; i--) {
 				double A[] = body.get(i - 1);
 				double B[] = body.get(i);

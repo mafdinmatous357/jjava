@@ -1,6 +1,11 @@
 package pole;
 import java.util.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class pole {
@@ -29,10 +34,19 @@ public class pole {
 			};
 			System.out.println("");
 		}
+		File pict_file = new File("/home/nxa17274/Downloads/Pomlka 2.jpg");
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(pict_file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		DisplayGraphics m = new DisplayGraphics();
+		m.img=img;
 		JFrame w = new JFrame("A title");
 		w.add(m);
-		w.setSize(400, 400);
+		w.setSize(1200, 800);
 		w.setVisible(true);
 	}
 
