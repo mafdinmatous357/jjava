@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<typeInfoHistroy>
-    <typeInfo handle="=vlocka/\/usr\/lib\/jvm\/java-8-openjdk-amd64\/jre\/lib\/rt.jar=/javadoc_location=/https:\/\/docs.oracle.com\/javase\/8\/docs\/api\/=/&lt;java.awt(Canvas.class[Canvas" modifiers="33" timestamp="1690229880000"/>
-    <typeInfo handle="=vlocka/\/usr\/lib\/jvm\/java-8-openjdk-amd64\/jre\/lib\/rt.jar=/javadoc_location=/https:\/\/docs.oracle.com\/javase\/8\/docs\/api\/=/&lt;java.util(Vector.class[Vector" modifiers="33" timestamp="1690229880000"/>
-    <typeInfo handle="=pole/\/usr\/lib\/jvm\/java-17-openjdk-amd64\/lib\/jrt-fs.jar`java.desktop=/javadoc_location=/https:\/\/docs.oracle.com\/en\/java\/javase\/17\/docs\/api\/=/=/module=/true=/&lt;java.awt(Graphics.class[Graphics" modifiers="1057" timestamp="1692917719000"/>
-    <typeInfo handle="=pole/\/usr\/lib\/jvm\/java-17-openjdk-amd64\/lib\/jrt-fs.jar`java.base=/javadoc_location=/https:\/\/docs.oracle.com\/en\/java\/javase\/17\/docs\/api\/=/=/module=/true=/&lt;java.util(Vector.class[Vector" modifiers="33" timestamp="1692917719000"/>
-</typeInfoHistroy>
