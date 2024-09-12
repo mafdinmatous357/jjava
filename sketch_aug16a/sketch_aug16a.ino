@@ -62,7 +62,7 @@ byte armsUp[8] = {
 };
 
 void setup() {
-  lcd.begin(16, 2);
+    lcd.begin(16, 2);
     lcd.createChar(1, heart);
     lcd.createChar(2, smiley);
 }
@@ -97,11 +97,12 @@ void loop() {
     lcd.print(pozice_x);
     lcd.setCursor(0, 1);
     lcd.print(pozice_y);
-    /*if(sensorReading == 0U) {
+    lcd.setCursor(14, 1);
+    if(sensorReading == 0U) {
         lcd.write(2);
     }
     else {
         lcd.write(1);
-    }*/
+    }
     delay(100);
 }
