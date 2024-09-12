@@ -62,6 +62,7 @@ byte armsUp[8] = {
 };
 
 void setup() {
+    Serial.begin(9600);
     lcd.begin(16, 2);
     lcd.createChar(1, heart);
     lcd.createChar(2, smiley);
@@ -74,8 +75,7 @@ void loop() {
         pozice_x++;
     }
     else if(sensorReading<2500) {
-        lcd.setCursor(8, 1);
-        lcd.print(sensorReading);
+        Serial.println(sensorReading);
     } else if(sensorReading<2600) {
         pozice_y--;
     } else if(sensorReading<4200) {
@@ -104,5 +104,5 @@ void loop() {
     else {
         lcd.write(1);
     }
-    delay(100);
+    delay(1000);
 }
