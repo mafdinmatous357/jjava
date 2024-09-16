@@ -71,21 +71,21 @@ void setup() {
 void loop() {
     sensorReading = analogRead(A0);
     
-    if(sensorReading<100) {
+    if(sensorReading<90) {
         pozice_x++;
     }
-    else if(sensorReading<2500) {
-        Serial.println(sensorReading);
-    } else if(sensorReading<2600) {
+    else if(sensorReading<240) {
         pozice_y--;
-    } else if(sensorReading<4200) {
+    } else if(sensorReading<350) {
+        pozice_y++;
+    } else if(sensorReading<630) {
         pozice_x--;
-    } else if(sensorReading<6500) {
+    } else if(sensorReading<1000) {
         stav='r';
     } else if(sensorReading<10000) {
-        pozice_x++;
+        
     }
-    
+    Serial.println(sensorReading);
     if(pozice_x > 16) {
         pozice_x = 0;
     }
@@ -93,11 +93,11 @@ void loop() {
         pozice_y = 0;
     }
     
-    lcd.setCursor(0, 0);
+    /*lcd.setCursor(0, 0);
     lcd.print(pozice_x);
     lcd.setCursor(0, 1);
-    lcd.print(pozice_y);
-    lcd.setCursor(14, 1);
+    lcd.print(pozice_y);*/
+    lcd.setCursor(pozice_x, pozice_y);
     if(sensorReading == 0U) {
         lcd.write(2);
     }
