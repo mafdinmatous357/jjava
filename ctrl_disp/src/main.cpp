@@ -33,9 +33,11 @@ void loop() {
   mylcd.Set_Draw_color (0,0,0);
   long x = p.x;
   long y = p.y;
-  long X = map(x,160,920,0,mylcd.Get_Display_Width());
+  long X = map(x,200,920,0,mylcd.Get_Display_Width());
   long Y =(y - 956) * (320 - 0) / (206 - 956) + 0;
-  mylcd.Draw_Pixel(X,Y);
+  if (p.z > 10) {
+    mylcd.Draw_Pixel(X,Y);
+  }
   mylcd.Print_Number_Int (X,100,220,3,' ',10);
   mylcd.Print_Number_Int (Y,100,300,3,' ',10);
   mylcd.Set_Text_colour(0xF800); // Red in RGB565 format
@@ -50,6 +52,8 @@ void loop() {
     Serial.print(y);
     Serial.print("=");
     Serial.print(Y);
+    Serial.print(" ");
+    Serial.print(p.z);
     Serial.println(" ");
   }
 }
