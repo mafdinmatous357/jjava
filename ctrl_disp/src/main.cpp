@@ -109,7 +109,43 @@ public:
 };
 std::list<Fireball> fireballs;
 
+class EnemyStarship {
+private:
+  LCDWIKI_KBV &lcd;
+  int x, y;
+  int width, height;
+  uint16_t color;
+
+public:
+  EnemyStarship(LCDWIKI_KBV &lcdRef, int startX, int startY, int w, int h, uint16_t col)
+      : lcd(lcdRef), x(startX), y(startY), width(w), height(h), color(col) {}
+
+  void draw() {
+    lcd.Fill_Rect(x - width / 2, y - height / 2, width, height, color);
+  }
+
+  void clear() {
+    lcd.Fill_Rect(x - width / 2, y - height / 2, width, height, 0xFFFF); // Clear with white background
+  }
+
+  void move(int dy) {
+    clear();
+    y += dy;
+    draw();
+  }
+
+  bool isOffScreen() {
+    return y > lcd.Get_Display_Height(); // Check if the enemy is off the bottom edge
+  }
+};
+
+std::list<EnemyStarship> enemyStarships;
 uint8_t cnt = 0;
+
+unsigned long lastFireballTime = 0; // Track the last fireball creation time
+const unsigned long fireballDelay = 400; // Increased delay in milliseconds between fireball shots
+unsigned long lastEnemySpawnTime = 0; // Track the last enemy spawn time
+const unsigned long enemySpawnDelay = 1000; // Delay in milliseconds between enemy spawns
 
 void loop() {
   digitalWrite(13, HIGH);
@@ -137,14 +173,36 @@ void loop() {
     prevX = X;
     prevY = Y;
 
-    // Create a fireball at the starship's position
-    fireballs.push_back(Fireball(mylcd, X, Y - 40, 5, 0xF800)); // Red fireball
+    // Create a fireball at the starship's position if enough time has passed
+    if (millis() - lastFireballTime >= fireballDelay) {
+      fireballs.push_back(Fireball(mylcd, X, Y - 40, 5, 0xF800)); // Red fireball
+      lastFireballTime = millis(); // Update the last fireball creation time
+    }
+  }
+
+  // Spawn enemy starships at random positions at the top of the screen
+  if (millis() - lastEnemySpawnTime >= enemySpawnDelay) {
+    int enemyX = random(20, mylcd.Get_Display_Width() - 20); // Random X position
+    enemyStarships.push_back(EnemyStarship(mylcd, enemyX, 0, 30, 20, 0x07E0)); // Green enemy starship
+    lastEnemySpawnTime = millis(); // Update the last enemy spawn time
+  }
+
+  // Move and draw enemy starships
+  for (auto it = enemyStarships.begin(); it != enemyStarships.end();) {
+    it->move(5); // Move enemy starship downward
+    if (it->isOffScreen()) {
+      it->clear(); // Clear the enemy starship if off-screen
+      it = enemyStarships.erase(it); // Remove enemy starship if off-screen
+    } else {
+      ++it;
+    }
   }
 
   // Move and draw fireballs
   for (auto it = fireballs.begin(); it != fireballs.end();) {
     it->move(-5); // Move fireball upwards
     if (it->isOffScreen()) {
+      it->clear(); // Clear the fireball if off-screen
       it = fireballs.erase(it); // Remove fireball if off-screen
     } else {
       ++it;
