@@ -2,6 +2,8 @@
 #include <TouchScreen.h>
 #include <LCDWIKI_GUI.h>
 #include <LCDWIKI_KBV.h>
+#include <ArduinoSTL.h>
+#include <list>
 
 #define YP A1
 #define XM A2
@@ -74,6 +76,39 @@ public:
 
 Starship starship(mylcd, 20, 40, 20, 0x0000, 0xFFFF); // Black draw color, white clear color
 
+class Fireball {
+private:
+  LCDWIKI_KBV &lcd;
+  int x, y;
+  int radius;
+  uint16_t color;
+
+public:
+  Fireball(LCDWIKI_KBV &lcdRef, int startX, int startY, int r, uint16_t col)
+      : lcd(lcdRef), x(startX), y(startY), radius(r), color(col) {}
+
+  void draw() {
+    lcd.Set_Draw_color(color);
+    lcd.Fill_Circle(x, y, radius);
+  }
+
+  void clear() {
+    lcd.Set_Draw_color(0xFFFF);
+    lcd.Fill_Circle(x, y, radius); // Clear with white background
+  }
+
+  void move(int dy) {
+    clear();
+    y += dy;
+    draw();
+  }
+
+  bool isOffScreen() {
+    return y < 0;
+  }
+};
+std::list<Fireball> fireballs;
+
 uint8_t cnt = 0;
 
 void loop() {
@@ -101,6 +136,19 @@ void loop() {
     // Update the previous position
     prevX = X;
     prevY = Y;
+
+    // Create a fireball at the starship's position
+    fireballs.push_back(Fireball(mylcd, X, Y - 40, 5, 0xF800)); // Red fireball
+  }
+
+  // Move and draw fireballs
+  for (auto it = fireballs.begin(); it != fireballs.end();) {
+    it->move(-5); // Move fireball upwards
+    if (it->isOffScreen()) {
+      it = fireballs.erase(it); // Remove fireball if off-screen
+    } else {
+      ++it;
+    }
   }
 
   mylcd.Print_Number_Int(X, 100, 220, 3, ' ', 10);
