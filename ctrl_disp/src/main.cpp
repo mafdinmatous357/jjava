@@ -29,6 +29,16 @@ void clearStarship(int x, int y) {
   int noseHeight = 20;
 
   mylcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2 - noseHeight, bodyWidth, bodyHeight + noseHeight, 0xFFFF); // Fill with background color (white)
+
+  // set Set_Draw_color for Draw_Pixel
+  mylcd.Set_Draw_color(0xFFFF);
+
+  // Clear the nose of the starship
+  for (int i = 0; i < noseHeight; i++) {
+    mylcd.Draw_Pixel(x, y - bodyHeight / 2 - i); // Fill with background color (white)
+    mylcd.Draw_Pixel(x - i, y - bodyHeight / 2 - i);
+    mylcd.Draw_Pixel(x + i, y - bodyHeight / 2 - i);
+  }
 }
 
 void drawStarship(int x, int y) {
@@ -36,6 +46,15 @@ void drawStarship(int x, int y) {
   int bodyWidth = 20;
   int bodyHeight = 40;
   mylcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2, bodyWidth, bodyHeight, 0x0000); // Black color
+
+  // Print a big "M" inside the starship body
+  mylcd.Set_Text_colour(0xFFFF); // White color
+  mylcd.Set_Text_Back_colour(0x0000); // Black background
+  mylcd.Set_Text_Size(2); // Set text size
+  mylcd.Print_String("M", x - 6, y - 8); // Adjust position to center the "M"
+
+  // set Set_Draw_color for Draw_Pixel
+  mylcd.Set_Draw_color(0x0000);
 
   // Draw the nose of the starship (triangle)
   int noseHeight = 20;
