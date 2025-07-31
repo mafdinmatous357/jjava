@@ -22,48 +22,57 @@ void setup() {
   Serial.begin(9600);
 }
 
-void clearStarship(int x, int y) {
-  // Clear the area where the starship was located
-  int bodyWidth = 20;
-  int bodyHeight = 40;
-  int noseHeight = 20;
+class Starship {
+private:
+  LCDWIKI_KBV &lcd;
+  int bodyWidth;
+  int bodyHeight;
+  int noseHeight;
+  uint16_t drawColor;
+  uint16_t clearColor;
 
-  mylcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2 - noseHeight, bodyWidth, bodyHeight + noseHeight, 0xFFFF); // Fill with background color (white)
-
-  // set Set_Draw_color for Draw_Pixel
-  mylcd.Set_Draw_color(0xFFFF);
-
-  // Clear the nose of the starship
-  for (int i = 0; i < noseHeight; i++) {
-    mylcd.Draw_Pixel(x, y - bodyHeight / 2 - i); // Fill with background color (white)
-    mylcd.Draw_Pixel(x - i, y - bodyHeight / 2 - i);
-    mylcd.Draw_Pixel(x + i, y - bodyHeight / 2 - i);
+  void setDrawColor(uint16_t color) {
+    lcd.Set_Draw_color(color);
   }
-}
 
-void drawStarship(int x, int y) {
-  // Draw the body of the starship (rectangle)
-  int bodyWidth = 20;
-  int bodyHeight = 40;
-  mylcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2, bodyWidth, bodyHeight, 0x0000); // Black color
+public:
+  Starship(LCDWIKI_KBV &lcdRef, int bodyW, int bodyH, int noseH, uint16_t drawCol, uint16_t clearCol)
+      : lcd(lcdRef), bodyWidth(bodyW), bodyHeight(bodyH), noseHeight(noseH), drawColor(drawCol), clearColor(clearCol) {}
 
-  // Print a big "M" inside the starship body
-  mylcd.Set_Text_colour(0xFFFF); // White color
-  mylcd.Set_Text_Back_colour(0x0000); // Black background
-  mylcd.Set_Text_Size(2); // Set text size
-  mylcd.Print_String("M", x - 6, y - 8); // Adjust position to center the "M"
+  void draw(int x, int y) {
+    // Draw the body of the starship (rectangle)
+    lcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2, bodyWidth, bodyHeight, drawColor);
 
-  // set Set_Draw_color for Draw_Pixel
-  mylcd.Set_Draw_color(0x0000);
+    // Print a big "M" inside the starship body
+    lcd.Set_Text_colour(clearColor); // Text color
+    lcd.Set_Text_Back_colour(drawColor); // Background color
+    lcd.Set_Text_Size(2); // Text size
+    lcd.Print_String("M", x - 6, y - 8); // Center the "M"
 
-  // Draw the nose of the starship (triangle)
-  int noseHeight = 20;
-  for (int i = 0; i < noseHeight; i++) {
-    mylcd.Draw_Pixel(x, y - bodyHeight / 2 - i); // Black color
-    mylcd.Draw_Pixel(x - i, y - bodyHeight / 2 - i);
-    mylcd.Draw_Pixel(x + i, y - bodyHeight / 2 - i);
+    // Draw the nose of the starship (triangle)
+    setDrawColor(drawColor);
+    for (int i = 0; i < noseHeight; i++) {
+      lcd.Draw_Pixel(x, y - bodyHeight / 2 - i);
+      lcd.Draw_Pixel(x - i, y - bodyHeight / 2 - i);
+      lcd.Draw_Pixel(x + i, y - bodyHeight / 2 - i);
+    }
   }
-}
+
+  void clear(int x, int y) {
+    // Clear the area where the starship was located
+    lcd.Fill_Rect(x - bodyWidth / 2, y - bodyHeight / 2 - noseHeight, bodyWidth, bodyHeight + noseHeight, clearColor);
+
+    // Clear the nose of the starship
+    setDrawColor(clearColor);
+    for (int i = 0; i < noseHeight; i++) {
+      lcd.Draw_Pixel(x, y - bodyHeight / 2 - i);
+      lcd.Draw_Pixel(x - i, y - bodyHeight / 2 - i);
+      lcd.Draw_Pixel(x + i, y - bodyHeight / 2 - i);
+    }
+  }
+};
+
+Starship starship(mylcd, 20, 40, 20, 0x0000, 0xFFFF); // Black draw color, white clear color
 
 uint8_t cnt = 0;
 
@@ -81,13 +90,13 @@ void loop() {
   long Y = (y - 956) * (320 - 0) / (206 - 956) + 0;
 
   if (p.z > 10) {
-    // Clear the previous starship position
+    // Clear the previous starship position using the Starship class
     if (prevX != -1 && prevY != -1) {
-      clearStarship(prevX, prevY);
+      starship.clear(prevX, prevY);
     }
 
-    // Draw the starship at the new position
-    drawStarship(X, Y);
+    // Draw the starship at the new position using the Starship class
+    starship.draw(X, Y);
 
     // Update the previous position
     prevX = X;
