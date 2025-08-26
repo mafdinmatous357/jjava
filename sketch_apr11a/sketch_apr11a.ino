@@ -106,6 +106,10 @@ public:
   bool isOffScreen() {
     return y < 0;
   }
+    
+   int getX() const { return x; }
+   int getY() const { return y; }
+   int getRadius() const { return radius; }
 };
 
 std::vector<Fireball> fireballs; // Changed from std::list to std::vector
@@ -138,15 +142,36 @@ public:
   bool isOffScreen() {
     return y > lcd->Get_Display_Height(); // Check if the enemy is off the bottom edge
   }
+    
+   int getX() const { return x; }
+   int getY() const { return y; }
+   int getWidth() const { return width; }
+   int getHeight() const { return height; }
 };
 
+inline int min(int x, int y) {
+    return (x > y) ? y : x;
+}
+
+inline int max(int x, int y) {
+    return (x > y) ? x : y;
+}
+
+bool checkCollision(int fx, int fy, int fr, int ex, int ey, int ew, int eh) {
+       int closestX = max(ex - ew / 2, min(fx, ex + ew / 2));
+       int closestY = max(ey - eh / 2, min(fy, ey + eh / 2));
+       int dx = fx - closestX;
+       int dy = fy - closestY;
+       return (dx * dx + dy * dy) <= (fr * fr);
+   }
+
 std::vector<EnemyStarship> enemyStarships; // Changed from std::list to std::vector
-uint8_t cnt = 0;
 
 unsigned long lastFireballTime = 0; // Track the last fireball creation time
 const unsigned long fireballDelay = 400; // Increased delay in milliseconds between fireball shots
 unsigned long lastEnemySpawnTime = 0; // Track the last enemy spawn time
-const unsigned long enemySpawnDelay = 1000; // Delay in milliseconds between enemy spawns
+const unsigned long enemySpawnDelay = 250; // Delay in milliseconds between enemy spawns
+const unsigned long enemyMaxCount = 7;
 
 void loop() {
   digitalWrite(13, HIGH);
@@ -184,7 +209,9 @@ void loop() {
   // Spawn enemy starships at random positions at the top of the screen
   if (millis() - lastEnemySpawnTime >= enemySpawnDelay) {
     int enemyX = random(20, mylcd.Get_Display_Width() - 20); // Random X position
-    enemyStarships.push_back(EnemyStarship(mylcd, enemyX, 0, 30, 20, 0x07E0)); // Green enemy starship
+   if (enemyMaxCount > enemyStarships.size()) {
+          enemyStarships.push_back(EnemyStarship(mylcd, enemyX, 0, 30, 20, 0x07E0)); // Green enemy starship
+    }
     lastEnemySpawnTime = millis(); // Update the last enemy spawn time
   }
 
@@ -209,23 +236,27 @@ void loop() {
       ++it;
     }
   }
-
-  mylcd.Print_Number_Int(X, 100, 220, 3, ' ', 10);
-  mylcd.Print_Number_Int(Y, 100, 300, 3, ' ', 10);
-  mylcd.Set_Text_colour(0xF800); // Red in RGB565 format
+  // Check for collisions and remove collided objects
+   for (auto f = fireballs.begin(); f != fireballs.end(); ) {
+       bool collided = false;
+       for (auto e = enemyStarships.begin(); e != enemyStarships.end(); ) {
+           if (checkCollision(f->getX(), f->getY(), f->getRadius(),
+                              e->getX(), e->getY(), e->getWidth(), e->getHeight())) {
+               f->clear();
+               e->clear();
+               e = enemyStarships.erase(e);
+               f = fireballs.erase(f);
+               collided = true;
+               break;
+           } else {
+               ++e;
+           }
+       }
+       if (!collided) ++f;
+   }
+//  mylcd.Print_Number_Int(X, 100, 220, 3, ' ', 10);
+//  mylcd.Print_Number_Int(Y, 100, 300, 3, ' ', 10);
+  /*mylcd.Set_Text_colour(0xF800); // Red in RGB565 format
   mylcd.Set_Text_Back_colour(0x00ff00);
-  mylcd.Set_Text_Size(1);
-  cnt = (cnt == 32) ? 0 : cnt;
-  if (cnt++ == 0) {
-    Serial.print(x);
-    Serial.print("=");
-    Serial.print(X);
-    Serial.print(" ");
-    Serial.print(y);
-    Serial.print("=");
-    Serial.print(Y);
-    Serial.print(" ");
-    Serial.print(p.z);
-    Serial.println(" ");
-  }
+  mylcd.Set_Text_Size(1);*/
 }
