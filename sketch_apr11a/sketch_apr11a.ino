@@ -168,7 +168,7 @@ bool checkCollision(int fx, int fy, int fr, int ex, int ey, int ew, int eh) {
 std::vector<EnemyStarship> enemyStarships; // Changed from std::list to std::vector
 
 unsigned long lastFireballTime = 0; // Track the last fireball creation time
-const unsigned long fireballDelay = 400; // Increased delay in milliseconds between fireball shots
+const unsigned long fireballDelay = 100; // Increased delay in milliseconds between fireball shots
 unsigned long lastEnemySpawnTime = 0; // Track the last enemy spawn time
 const unsigned long enemySpawnDelay = 250; // Delay in milliseconds between enemy spawns
 const unsigned long enemyMaxCount = 7;
@@ -254,6 +254,7 @@ void loop() {
        }
        if (!collided) ++f;
    }
+    Serial.print(fireballs.size());
 //  mylcd.Print_Number_Int(X, 100, 220, 3, ' ', 10);
 //  mylcd.Print_Number_Int(Y, 100, 300, 3, ' ', 10);
   /*mylcd.Set_Text_colour(0xF800); // Red in RGB565 format
